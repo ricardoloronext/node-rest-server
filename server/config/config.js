@@ -19,3 +19,15 @@ let urlDb = process.env.NODE_ENV === 'dev' ?
 process.env.MONGO_URL;
 
 process.env.URLDB = urlDb;
+
+// ================================
+// Fecha de expiración
+// ================================
+
+process.env.EXPIRES_IN = 60 * 60 * 24 * 30;
+
+// ================================
+// Semilla de autenticación (SEED)
+// ================================
+
+process.env.AUTH_SEED = process.env.AUTH_SEED || 'auth-dev-seed' ;

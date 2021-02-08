@@ -1,11 +1,14 @@
 const express = require('express');
 const app = express();
 const Usuario = require('../models/usuario');
+const { authChecking, adminRoleChecking } = require('../middlewares/authentication')
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 //Get con paginación (limite)
-app.get('/usuario', (req, res) => {
+// AuthChecking es el middleware para analizar token
+app.get('/usuario', [authChecking, adminRoleChecking], (req, res) => {
+
   let from = Number(req.query.from || 0);
   let limit = Number(req.query.limit || 5); 
   Usuario.find({status: true}, 'nombre email role status google img') //Trae solo los campos q se indican en el string
@@ -31,7 +34,7 @@ app.get('/usuario', (req, res) => {
     })
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [authChecking, adminRoleChecking], (req, res) => {
   let body = req.body;
 
   let usuario = new Usuario({
@@ -58,7 +61,7 @@ app.post('/usuario', (req, res) => {
 });
 
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', [authChecking, adminRoleChecking], (req, res) => {
   let id = req.params.id;
   let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'status']);
 
@@ -84,7 +87,7 @@ app.put('/usuario/:id', (req, res) => {
 });
 
 // Borra usuario (o pone status = false)
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [authChecking, adminRoleChecking], (req, res) => {
   
   let id = req.params.id;
   let statusChanged = {
